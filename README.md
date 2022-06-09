@@ -1,7 +1,7 @@
 # selfAuth
 SelfAuth supports real-time monitoring and private dynamic authorization services for on-chain operations
 
-![https://github.com/refitor/selfauth.png](https://github.com/refitor/selfauth.png)
+![/selfauth.png](/selfauth.png)
 
 ## deploy demo contract
 1. git clone https://github.com/refitor/selfAuth.git

@@ -9,8 +9,8 @@ import (
 
 	"github.com/joho/godotenv"
 
-	"github.com/refitor/web3"
-	"github.com/refitor/web3/contracts/demo" // replace with go module path used in go.mod
+	"github.com/refitor/selfAuth/web3"
+	"github.com/refitor/selfAuth/web3/contracts/demo" // replace with go module path used in go.mod
 )
 
 var (

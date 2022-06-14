@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/refitor/web3/contracts/rscore"
+	"github.com/refitor/selfAuth/web3/contracts/rscore"
 
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"

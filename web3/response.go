@@ -1,7 +1,8 @@
 package web3
 
 import (
-	"github.com/refitor/web3/contracts"
+	"github.com/refitor/selfAuth/web3/contracts"
+	"github.com/refitor/selfAuth/web3/contracts/rscore"
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
@@ -13,7 +14,7 @@ func AuthResponse(client *ethclient.Client, contractAddr, authAddr string, param
 		return "", err
 	}
 
-	tx, err := session.AuthResponse(common.HexToAddress(authAddr), params)
+	tx, err := rscore.AuthResponse(common.HexToAddress(authAddr), params)
 	if err != nil {
 		return "", err
 	}

@@ -1,4 +1,4 @@
-//go:generate abigen --sol=../contracts_demo/sademo.sol --pkg=contracts_demo --out=../contracts_demo/sademo.go
+//go:generate abigen --sol=../contracts/demo/SADemo.sol --pkg=demo --out=../contracts/demo/SADemo.go
 package main
 
 import (
@@ -9,12 +9,13 @@ import (
 
 	"github.com/joho/godotenv"
 
-	"rshub/rsapi/service/web3"
-	"rshub/rsapi/service/web3/contracts_demo" // replace with go module path used in go.mod
+	"github.com/refitor/web3"
+	"github.com/refitor/web3/contracts/demo" // replace with go module path used in go.mod
 )
 
 var (
 	myenv   map[string]string
+	name    = flag.String("name", "demo", "--name=demo")
 	vconf   = flag.String("conf", ".env", "--conf=.env")
 	bReset  = flag.Bool("reset", false, "--reset=true")
 	bDeploy = flag.Bool("deploy", false, "--deploy=true")
@@ -24,28 +25,32 @@ func main() {
 	flag.Parse()
 	loadEnv(*vconf)
 
-	if *bReset {
-		updateEnvFile("CONTRACTADDR", "", *vconf)
-		fmt.Println("Cleared contract address. Bye!")
-	} else {
-		client, err := web3.Init(myenv["GATEWAY"], myenv["GATEWAY"], nil)
-		if err != nil {
-			log.Fatalln(err.Error())
-		}
-		defer client.Close()
-
-		// Load and init variables
-		if _, err := contracts_demo.Init(context.Background(), client, func(s string) string {
-			if *bDeploy && s == "operate" {
-				return "CONTRACTNEW"
-			}
-			return myenv[s]
-		}); err != nil {
-			log.Fatalln(err.Error())
-		}
-		updateEnvFile("CONTRACTADDR", contracts_demo.ContractAddress(), *vconf)
-		fmt.Printf("contract address: %s\n", contracts_demo.ContractAddress())
+	switch *name {
+	case "demo":
+		deployForDemo()
 	}
+}
+
+func deployForDemo() {
+	client, err := web3.Init(myenv["GATEWAY"], myenv["GATEWAY"], nil)
+	if err != nil {
+		log.Fatalln(err.Error())
+	}
+	defer client.Close()
+
+	// Load and init variables
+	if _, err := demo.SADemoInit(context.Background(), client, func(s string) string {
+		if *bDeploy && s == "operate" {
+			return "CONTRACTNEW"
+		} else if s == "CONTRACTADDR" && *bReset {
+			return ""
+		}
+		return myenv[s]
+	}); err != nil {
+		log.Fatalln(err.Error())
+	}
+	updateEnvFile("CONTRACTADDR", demo.SADemoAddress(), *vconf)
+	fmt.Printf("contract address: %s\n", demo.SADemoAddress())
 }
 
 //// Contract interaction functions

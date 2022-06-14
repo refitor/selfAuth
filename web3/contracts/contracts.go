@@ -6,12 +6,14 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/refitor/web3/contracts/rscore"
+
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
 )
 
-func LoadContract(client *ethclient.Client, contractAddr string, fGetParam func(string) string) (*ISelfAuthSession, error) {
+func LoadContract(client *ethclient.Client, contractAddr string, fGetParam func(string) string) (*rscore.SelfAuthSession, error) {
 	// Init new authenticated session
 	session, err := doNewSession(client, fGetParam)
 	if err != nil {
@@ -23,7 +25,7 @@ func LoadContract(client *ethclient.Client, contractAddr string, fGetParam func(
 
 // NewSession returns a quiz.SelfAuthSession struct that
 // contains an authentication key to sign transactions with.
-func doNewSession(client *ethclient.Client, fGetParam func(string) string) (*ISelfAuthSession, error) {
+func doNewSession(client *ethclient.Client, fGetParam func(string) string) (*rscore.SelfAuthSession, error) {
 	// Create new transactor
 	keystore, err := os.Open(fGetParam("KEYSTORE"))
 	if err != nil {
@@ -48,7 +50,7 @@ func doNewSession(client *ethclient.Client, fGetParam func(string) string) (*ISe
 	// GasLimit: 0 // Setting to 0 automatically estimates gas limit
 
 	// Return session without contract instance
-	return &ISelfAuthSession{
+	return &rscore.SelfAuthSession{
 		TransactOpts: *auth,
 		CallOpts: bind.CallOpts{
 			From:    auth.From,
@@ -60,13 +62,13 @@ func doNewSession(client *ethclient.Client, fGetParam func(string) string) (*ISe
 //// Contract initialization functions
 
 // LoadContract loads a contract if one exists
-func doLoadContract(session *ISelfAuthSession, client *ethclient.Client, contractAddr string) error {
+func doLoadContract(session *rscore.SelfAuthSession, client *ethclient.Client, contractAddr string) error {
 	if contractAddr == "" {
 		return errors.New(("could not find a contract address to load"))
 	}
 
 	addr := common.HexToAddress(contractAddr)
-	instance, err := NewISelfAuth(addr, client)
+	instance, err := rscore.NewSelfAuth(addr, client)
 	if err != nil {
 		return fmt.Errorf("could not load contract: %v\n", err)
 	}

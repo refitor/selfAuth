@@ -1,0 +1,157 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SelfAuth</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <style>
+        .otp-wrapper {
+            text-align: center;
+            margin-top: 100px;
+        }
+        .otp-container {
+            display: inline-block;
+        }
+        .otp-container .code {
+            width: 26px;
+            height: 33px;
+            margin: 0 2px;
+            border: none;
+            border-bottom: 2px solid rgba(0, 0, 0, .2);
+            padding: 0;
+            color: rgba(0, 0, 0, .7);
+            margin-bottom: 0;
+            padding-bottom: 0;
+            font-size: 30px;
+            box-shadow: none;
+            text-align: center;
+            background-color: none;
+            font-weight: 600;
+            border-radius: 0;
+            outline: 0;
+            transition: border 0.3s ease;
+        }
+        .otp-container .code:focus {
+            border-color: rgba(0, 0, 0, .5);
+        }
+        .otp-container .code.otp-filled-active {
+            border-color: #00bb09;
+        }
+        .otp-submit {
+            background: #42b549;
+            border: 0;
+            color: #fff;
+            margin-top: 15px;
+            padding: 10px 15px;
+            font-size: 14px;
+            border-radius: 3px;
+            letter-spacing: 1px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        .otp-submit[disabled] {
+            opacity: 0.6;
+            cursor: default;
+        }
+  </style>
+</head>
+
+<body>
+    <div class="otp-wrapper otp-event">
+        <h3>SelfAuth Authenticator</h3>
+        <h5 id="account"></h5>
+        <form id="verifyForm" method="post" action="/api/auth/verify" class="otp-container">
+            <input type="hidden" id="authID" name="authID" />
+            <input type="tel" id="code-1" class="code" maxlength="1" autocomplete="off" autofocus="true">
+            <input type="tel" id="code-2" class="code" maxlength="1" autocomplete="off">
+            <input type="tel" id="code-3" class="code" maxlength="1" autocomplete="off">
+            <input type="tel" id="code-4" class="code" maxlength="1" autocomplete="off">
+            <input type="tel" id="code-5" class="code" maxlength="1" autocomplete="off">
+            <input type="tel" id="code-6" class="code" maxlength="1" autocomplete="off">
+        </form>
+        <div>
+            <button id="confirm" type="button" class="otp-submit" disabled onclick="verify()">Verify</button>
+        </div>
+        <script>
+        function verify() {
+            const params = new URLSearchParams(window.location.search)
+            document.getElementById("authID").value = params.get('random');
+            document.getElementById("verifyForm").submit();
+        }
+        $(document).ready(function() {
+            const params = new URLSearchParams(window.location.search)
+            document.getElementById("account").innerHTML = params.get('account');
+            $('.otp-event').each(function() {
+                var $input = $(this).find('.code');
+                var $submit = $(this).find('.otp-submit');
+                $input.keydown(function(ev) {
+                    otp_val = $(this).val();
+                    if (ev.keyCode == 37) {
+                        $(this).prev().focus();
+                        ev.preventDefault();
+                    } else if (ev.keyCode == 39) {
+                        $(this).next().focus();
+                        ev.preventDefault();
+                    } else if (otp_val.length == 1 && ev.keyCode != 8 && ev.keyCode != 46) {
+                        otp_next_number = $(this).next();
+                        if (otp_next_number.length == 1 && otp_next_number.val().length == 0) {
+                            otp_next_number.focus();
+                        }
+                    } else if (otp_val.length == 0 && ev.keyCode == 8) {
+                        $(this).prev().val("");
+                        $(this).prev().focus();
+                    } else if (otp_val.length == 1 && ev.keyCode == 8) {
+                        $(this).val("");
+                    } else if (otp_val.length == 0 && ev.keyCode == 46) {
+                        next_input = $(this).next();
+                        next_input.val("");
+                        while (next_input.next().length > 0) {
+                            next_input.val(next_input.next().val());
+                            next_input = next_input.next();
+                            if (next_input.next().length == 0) {
+                                next_input.val("");
+                                break;
+                            }
+                        }
+                    }
+
+                }).focus(function() {
+                    $(this).select();
+                    var otp_val = $(this).prev().val();
+                    if (otp_val === "") {
+                        $(this).prev().focus();
+                    } else if ($(this).next().val()) {
+                        $(this).next().focus();
+                    }
+                }).keyup(function(ev) {
+                    otpCodeTemp = "";
+                    $input.each(function(i) {
+                        if ($(this).val().length != 0) {
+                            $(this).addClass('otp-filled-active');
+                        } else {
+                            $(this).removeClass('otp-filled-active');
+                        }
+                        otpCodeTemp += $(this).val();
+                    });
+                    if ($(this).val().length == 1 && ev.keyCode != 37 && ev.keyCode != 39) {
+                        $(this).next().focus();
+                        ev.preventDefault();
+                    }
+                    $input.each(function(i) {
+                        if ($(this).val() != '') {
+                            $submit.prop('disabled', false);
+                        } else {
+                            $submit.prop('disabled', true);
+                        }
+                    });
+
+                });
+            });
+
+        });
+        </script>
+    </div>
+</body>
+
+</html>

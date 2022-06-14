@@ -11,7 +11,6 @@ SelfAuth supports real-time monitoring and private dynamic authorization service
 5. ./deploy3 --deploy=true
 
 ## run web
-1. git clone https://github.com/refitor/selfAuth.git
+1. go install github.com/refitor/microweb@latest
 2. cd ./selfAuth/web
-3. npm install
-4. npm run serve 
+3. microweb

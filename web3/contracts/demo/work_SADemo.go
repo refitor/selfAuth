@@ -1,4 +1,4 @@
-package contracts_demo
+package demo
 
 import (
 	"context"
@@ -14,35 +14,35 @@ import (
 
 var v_contract_address string
 
-func ContractAddress() string {
+func SADemoAddress() string {
 	return v_contract_address
 }
 
-func Init(ctx context.Context, client *ethclient.Client, fGetParam func(string) string, contractDatas ...interface{}) (*SADemoSession, error) {
+func SADemoInit(ctx context.Context, client *ethclient.Client, fGetParam func(string) string, contractDatas ...interface{}) (*SADemoSession, error) {
 	// defer client.Close()
 	v_contract_address = fGetParam("CONTRACTADDR")
 
 	// Init new authenticated session
-	session, err := doNewSession(ctx, client, fGetParam)
+	session, err := doNewSADemoSession(ctx, client, fGetParam)
 	if err != nil {
 		return nil, err
 	}
 
 	// Load or Deploy contract, and update session with contract instance
 	if v_contract_address == "" && fGetParam("operate") == "CONTRACTNEW" {
-		err = doNewContract(session, client, contractDatas...)
+		err = doNewSADemoContract(session, client, contractDatas...)
 	}
 
 	// If we have an existing contract, load it; if we've deployed a new contract, attempt to load it.
 	if v_contract_address != "" {
-		err = doLoadContract(session, client)
+		err = doLoadSADemoContract(session, client)
 	}
 	return session, err
 }
 
 // NewSession returns a quiz.SADemoSession struct that
 // contains an authentication key to sign transactions with.
-func doNewSession(ctx context.Context, client *ethclient.Client, fGetParam func(string) string) (*SADemoSession, error) {
+func doNewSADemoSession(ctx context.Context, client *ethclient.Client, fGetParam func(string) string) (*SADemoSession, error) {
 	// Create new transactor
 	keystore, err := os.Open(fGetParam("KEYSTORE"))
 	if err != nil {
@@ -79,7 +79,7 @@ func doNewSession(ctx context.Context, client *ethclient.Client, fGetParam func(
 //// Contract initialization functions
 
 // NewContract deploys a contract if no existing contract exists
-func doNewContract(session *SADemoSession, client *ethclient.Client, contractDatas ...interface{}) error {
+func doNewSADemoContract(session *SADemoSession, client *ethclient.Client, contractDatas ...interface{}) error {
 	// Test our inputs
 	if v_contract_address != "" {
 		return nil
@@ -98,7 +98,7 @@ func doNewContract(session *SADemoSession, client *ethclient.Client, contractDat
 }
 
 // LoadContract loads a contract if one exists
-func doLoadContract(session *SADemoSession, client *ethclient.Client) error {
+func doLoadSADemoContract(session *SADemoSession, client *ethclient.Client) error {
 	if v_contract_address == "" {
 		return errors.New(("could not find a contract address to load"))
 	}

@@ -8,28 +8,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/refitself/rslibs/libhttp"
 	"gopkg.in/gomail.v2"
 )
-
-func handleByEmail(param, privateKey string) error {
-	dparams, err := doDecodeNetParams(param, privateKey, 3)
-	if err != nil {
-		return libhttp.Error("ReqUserAuth parse failed, detail: "+err.Error(), "system processing exception")
-	}
-
-	// support: email
-	if isValidEmail(dparams[1]) {
-		_, err := PushByEmail(dparams[1], "dynamic authorization", "", fmt.Sprintf("[%s] code for dynamic authorization: %s", dparams[0], dparams[2]), nil)
-		if err != nil {
-			return libhttp.Error("ReqUserAuth send failed, detail: "+err.Error(), "system processing exception")
-		}
-	} else {
-		err := fmt.Errorf("invalid authID: %s", dparams[1])
-		return libhttp.Error("ReqUserAuth verify failed, detail: "+err.Error(), "system processing exception")
-	}
-	return nil
-}
 
 // email push
 var (

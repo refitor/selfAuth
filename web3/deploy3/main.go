@@ -10,7 +10,8 @@ import (
 	"github.com/joho/godotenv"
 
 	"github.com/refitor/selfAuth/web3"
-	"github.com/refitor/selfAuth/web3/contracts/demo" // replace with go module path used in go.mod
+	"github.com/refitor/selfAuth/web3/contracts/demo"
+	"github.com/refitor/selfAuth/web3/contracts/rsdefi"
 )
 
 var (
@@ -28,11 +29,13 @@ func main() {
 	switch *name {
 	case "demo":
 		deployForDemo()
+	case "rspay":
+		deployForRSPay()
 	}
 }
 
 func deployForDemo() {
-	client, err := web3.Init(myenv["GATEWAY"], myenv["GATEWAY"], nil)
+	client, err := web3.Init(myenv["GATEWAY"], nil)
 	if err != nil {
 		log.Fatalln(err.Error())
 	}
@@ -51,6 +54,28 @@ func deployForDemo() {
 	}
 	updateEnvFile("CONTRACTADDR", demo.SADemoAddress(), *vconf)
 	fmt.Printf("contract address: %s\n", demo.SADemoAddress())
+}
+
+func deployForRSPay() {
+	client, err := web3.Init(myenv["GATEWAY"], nil)
+	if err != nil {
+		log.Fatalln(err.Error())
+	}
+	defer client.Close()
+
+	// Load and init variables
+	if _, err := rsdefi.RSPayInit(context.Background(), client, func(s string) string {
+		if *bDeploy && s == "operate" {
+			return "CONTRACTNEW"
+		} else if s == "CONTRACTADDR" && *bReset {
+			return ""
+		}
+		return myenv[s]
+	}); err != nil {
+		log.Fatalln(err.Error())
+	}
+	updateEnvFile("CONTRACTADDR", rsdefi.RSPayAddress(), *vconf)
+	fmt.Printf("contract address: %s\n", rsdefi.RSPayAddress())
 }
 
 //// Contract interaction functions

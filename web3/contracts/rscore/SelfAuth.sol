@@ -25,6 +25,9 @@ interface SelfAuth {
      * @param params In order to ensure the problem of intermediate state change caused by abnormal conditions, when triggering the event 
      * authRequest, please package the call parameters into bytes data for transmission, and receive and process by the function authResponse
      *
+     * @dev encode example for params: abi.encode(1, 1)
+     * @dev decode example for params: (uint256 methodID, uint256 value) = abi.decode(params, (uint256, uint256));
+     *
      * WARNING: authResponse will only be called if private authorization is successful. It is necessary to perform caller verification in the 
      * implementation of this function. For details, please refer to the demo.
      */

@@ -23,7 +23,7 @@ type SelfAuthEvent struct {
 
 var v_contract_abi_ISelfAuth = `[{"anonymous":false,"inputs":[{"indexed":false,"internalType":"address","name":"authAddr","type":"address"},{"indexed":false,"internalType":"bytes","name":"params","type":"bytes"}],"name":"authRequest","type":"event"},{"inputs":[{"internalType":"address","name":"authAddr","type":"address"},{"internalType":"bytes","name":"params","type":"bytes"}],"name":"authResponse","outputs":[],"stateMutability":"nonpayable","type":"function"}]`
 
-func Init(gatewayWss, gatewayHttps string, fGetParam func(string) string) (*ethclient.Client, error) {
+func Init(gatewayWss string, fGetParam func(string) string) (*ethclient.Client, error) {
 	contractAbi, err := abi.JSON(strings.NewReader(v_contract_abi_ISelfAuth))
 	if err != nil {
 		log.Fatal(err)

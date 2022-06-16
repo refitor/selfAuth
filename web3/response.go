@@ -1,7 +1,7 @@
 package web3
 
 import (
-	"rshub/rsapi/service/web3/contracts"
+	"github.com/refitor/selfAuth/web3/contracts"
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"

@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import './node_modules/@openzeppelin/contracts/access/Ownable.sol';
 import './node_modules/@openzeppelin/contracts/utils/math/SafeMath.sol';
-import 'https://github.com/refitor/selfAuth/blob/v1.0.0/web3/contracts/rscore/SelfAuth.sol';
+import './SelfAuth.sol';
 
 // @title SelfAuth demo inherited from SelfAuth
 // @author refitor

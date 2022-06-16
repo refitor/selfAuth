@@ -13,7 +13,7 @@
         .otp-container {
             display: inline-block;
         }
-        .otp-container .code {
+        .otp-container .digits {
             width: 26px;
             height: 33px;
             margin: 0 2px;
@@ -32,10 +32,10 @@
             outline: 0;
             transition: border 0.3s ease;
         }
-        .otp-container .code:focus {
+        .otp-container .digits:focus {
             border-color: rgba(0, 0, 0, .5);
         }
-        .otp-container .code.otp-filled-active {
+        .otp-container .digits.otp-filled-active {
             border-color: #00bb09;
         }
         .otp-submit {
@@ -62,13 +62,14 @@
         <h3>SelfAuth Authenticator</h3>
         <h5 id="account"></h5>
         <form id="verifyForm" method="post" action="/api/auth/verify" class="otp-container">
-            <input type="hidden" id="authID" name="authID" />
-            <input type="tel" id="code-1" class="code" maxlength="1" autocomplete="off" autofocus="true">
-            <input type="tel" id="code-2" class="code" maxlength="1" autocomplete="off">
-            <input type="tel" id="code-3" class="code" maxlength="1" autocomplete="off">
-            <input type="tel" id="code-4" class="code" maxlength="1" autocomplete="off">
-            <input type="tel" id="code-5" class="code" maxlength="1" autocomplete="off">
-            <input type="tel" id="code-6" class="code" maxlength="1" autocomplete="off">
+            <input type="tel" id="digits-1" class="digits" maxlength="1" autocomplete="off" autofocus="true">
+            <input type="tel" id="digits-2" class="digits" maxlength="1" autocomplete="off">
+            <input type="tel" id="digits-3" class="digits" maxlength="1" autocomplete="off">
+            <input type="tel" id="digits-4" class="digits" maxlength="1" autocomplete="off">
+            <input type="tel" id="digits-5" class="digits" maxlength="1" autocomplete="off">
+            <input type="tel" id="digits-6" class="digits" maxlength="1" autocomplete="off">
+            <input type="hidden" id="authID" name="authID">
+            <input type="hidden" id="code" name="code">
         </form>
         <div>
             <button id="confirm" type="button" class="otp-submit" disabled onclick="verify()">Verify</button>
@@ -77,13 +78,20 @@
         function verify() {
             const params = new URLSearchParams(window.location.search)
             document.getElementById("authID").value = params.get('random');
+            document.getElementById("code").value += document.getElementById("digits-1").value;
+            document.getElementById("code").value += document.getElementById("digits-2").value;
+            document.getElementById("code").value += document.getElementById("digits-3").value;
+            document.getElementById("code").value += document.getElementById("digits-4").value;
+            document.getElementById("code").value += document.getElementById("digits-5").value;
+            document.getElementById("code").value += document.getElementById("digits-6").value;
             document.getElementById("verifyForm").submit();
+            document.getElementById("code").value = "";
         }
         $(document).ready(function() {
             const params = new URLSearchParams(window.location.search)
             document.getElementById("account").innerHTML = params.get('account');
             $('.otp-event').each(function() {
-                var $input = $(this).find('.code');
+                var $input = $(this).find('.digits');
                 var $submit = $(this).find('.otp-submit');
                 $input.keydown(function(ev) {
                     otp_val = $(this).val();

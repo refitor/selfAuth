@@ -21,10 +21,10 @@ type SelfAuthEvent struct {
 	Params   []byte
 }
 
-var v_contract_abi_ISelfAuth = `[{"anonymous":false,"inputs":[{"indexed":false,"internalType":"address","name":"authAddr","type":"address"},{"indexed":false,"internalType":"bytes","name":"params","type":"bytes"}],"name":"authRequest","type":"event"},{"inputs":[{"internalType":"address","name":"authAddr","type":"address"},{"internalType":"bytes","name":"params","type":"bytes"}],"name":"authResponse","outputs":[],"stateMutability":"nonpayable","type":"function"}]`
+var v_contract_abi_SelfAuth = `[{"anonymous":false,"inputs":[{"indexed":false,"internalType":"address","name":"authAddr","type":"address"},{"indexed":false,"internalType":"bytes","name":"params","type":"bytes"}],"name":"authRequest","type":"event"},{"inputs":[{"internalType":"address","name":"authAddr","type":"address"},{"internalType":"bytes","name":"params","type":"bytes"}],"name":"authResponse","outputs":[],"stateMutability":"nonpayable","type":"function"}]`
 
 func Init(gatewayWss string, fGetParam func(string) string) (*ethclient.Client, error) {
-	contractAbi, err := abi.JSON(strings.NewReader(v_contract_abi_ISelfAuth))
+	contractAbi, err := abi.JSON(strings.NewReader(v_contract_abi_SelfAuth))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -100,5 +100,8 @@ func GetEvent(l types.Log) *SelfAuthEvent {
 }
 
 func GetEventAddress(e *SelfAuthEvent) string {
-	return common.BytesToAddress(e.AuthAddr[:]).String()
+	if e != nil {
+		return common.BytesToAddress(e.AuthAddr[:]).String()
+	}
+	return ""
 }
